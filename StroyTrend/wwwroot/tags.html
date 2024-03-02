@@ -1,0 +1,106 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Tags</title>
+    <link rel="stylesheet" href="css/site.css">
+    <script src="/js/site.js"></script>
+</head>
+
+<body>
+    <header>
+        <div class="title">Тестовое задание</div>
+        <ul class="menu">
+            <li><a href="index">Home</a></li>
+            <li><a href="duration">Duration</a></li>
+            <li><a href="ratings">Ratings</a></li>
+            <li><a href="totalChats">Total Chats</a></li>
+            <li><a href="tags">Tags</a></li>
+        </ul>
+    </header>
+
+    <h1>Здесь таблица с Tags</h1>
+
+    <p>
+        <button id="tableBtn">Table</button>
+    </p>
+
+    <script>
+
+        // Получение всех Tags и добавление их в таблицу
+        async function showTags() {
+            // отправляем запрос и получаем ответ
+            const response = await fetch("/api/tags", {
+                method: "GET",
+                headers: { "Accept": "application/json" }
+            });
+            // если запрос прошел нормально
+            if (response.ok === true) {
+                // получаем данные
+                const tags = await response.json();
+                createTableTag(tags);
+            }
+        }
+        //создание таблицы
+        function createTableTag(log) {
+
+            const body = document.querySelector("body");
+            const table = document.createElement("table");
+            const rows = document.createElement("tbody");
+            const thead = document.createElement("thead");
+            const rowHead = document.createElement("tr");
+
+            thead.append(rowHead);
+            table.append(thead);
+            table.append(rows);
+            body.append(table);
+
+            const cell = document.createElement("th");
+            cell.append("date");
+            rowHead.append(cell);
+
+            // создаем шапку таблицы
+            const temp = new Array();
+            for (var record in log.records) {
+                for (var i in log.records[record]) {
+                    temp.push(i);
+                }
+            }
+            const tempSet = new Set(temp);
+            const headArray = Array.from(tempSet);
+
+            for (var i = 0; i < headArray.length; i++) {
+                const cell = document.createElement("th");
+                cell.append(headArray[i]);
+                rowHead.append(cell);
+            }
+            // добавляем полученные элементы в таблицу
+            for (var record in log.records) {
+                rows.append(makeRowTag(log.records[record], record, headArray));
+            }
+        }
+        //создание строки
+        function makeRowTag(record, recordName, headArray) {
+
+            const tr = document.createElement("tr");
+            tr.setAttribute("row-name", recordName);
+
+            const dateTd = document.createElement("td");
+            dateTd.append(recordName);
+            tr.append(dateTd);
+
+            for (var i = 0; i < headArray.length; i++) {
+
+                const propertyTd = document.createElement("td");
+
+                if (headArray[i] in record) {
+                    propertyTd.append(record[headArray[i]]);
+                }
+                tr.append(propertyTd);
+            }
+            return tr;
+        }
+        document.getElementById("tableBtn").addEventListener("click", () => showTags());
+    </script>
+</body>
+</html>

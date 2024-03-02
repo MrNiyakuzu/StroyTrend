@@ -1,0 +1,47 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Total Chats</title>
+    <link rel="stylesheet" href="css/site.css">
+    <script src="/js/site.js"></script>
+</head>
+<body>
+    <header>
+        <div class="title">Тестовое задание</div>
+        <ul class="menu">
+            <li><a href="index">Home</a></li>
+            <li><a href="duration">Duration</a></li>
+            <li><a href="ratings">Ratings</a></li>
+            <li><a href="totalChats">Total Chats</a></li>
+            <li><a href="tags">Tags</a></li>
+        </ul>
+    </header>
+
+    <h1>Здесь таблица с Total Chats</h1>
+
+    <p>
+        <button id="tableBtn">Table</button>
+    </p>
+
+    <script>
+
+        // Получение всех Total Chats и добавление их в таблицу
+        async function showTotalChats() {
+            // отправляем запрос и получаем ответ
+            const response = await fetch("/api/totalChats", {
+                method: "GET",
+                headers: { "Accept": "application/json" }
+            });
+            // если запрос прошел нормально
+            if (response.ok === true) {
+                // получаем данные
+                const totalChats = await response.json();
+                createTable(totalChats);
+            }
+        }
+        document.getElementById("tableBtn").addEventListener("click", () => showTotalChats());
+
+    </script>
+</body>
+</html>
